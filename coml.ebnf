@@ -12,7 +12,7 @@
 
 (* Basic Types *)
 
-<basicTypes> ::= <number> | <boolean> | <string> | <array> | <hash> | <patchKey> | <patch>;
+<basicTypes> ::= <number> | <boolean> | <string> | <array> | <hash> | <patchKey> | <patch> | "nil";
 
 (* Basic Types: Number *)
 
