@@ -1,6 +1,7 @@
 <coml> ::= <combined>;
 
 (* Basic Token *)
+
 <whitespace> ::= " " | "\t";
 <whitespaces> ::= <whitespace> | <whitespace> <whitespaces>;
 <optionalWhiteSpaces> ::= "" | <whitespaces>;
