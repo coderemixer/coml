@@ -11,7 +11,7 @@
 
 (* Basic Types *)
 
-<basicTypes> ::= <number> | <boolean> | <string> | <array> | <hash> | <key> | <patch>;
+<basicTypes> ::= <number> | <boolean> | <string> | <array> | <hash> | <patchKey> | <patch>;
 
 (* Basic Types: Number *)
 
