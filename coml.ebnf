@@ -16,6 +16,7 @@ basicTypes ::= number | boolean | string | array | hash | patchKey | patch | "ni
 digit ::= #'[1-9]';
 natural ::= digit | "0" | natural "0" | digit natural;
 decInteger ::= natural | "-" natural | "+" natural;
+float ::= decInteger "f" | decInteger "." natural;
 
 binDigit ::= #'[0-1]';
 binNature ::= "0b" binDigit+;
@@ -30,7 +31,7 @@ hexNature ::= "0x" hexDigit+;
 hexInteger ::= hexNature | "-" hexNature | "+" hexNature;
 
 integer ::= decInteger | binInteger | octInteger | hexInteger;
-number ::= integer | decInteger "." natural;
+number ::= integer | float;
 
 (* Basic Types: Boolean *)
 
