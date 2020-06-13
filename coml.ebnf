@@ -73,7 +73,8 @@ patchReplace ::= patchKey whitespaces? "=" splitter? basicTypes;
 patchAppend ::= patchKey whitespaces? "<<" splitter? (hash | array);
 patchKeyVal ::= patchReplace | patchAppend;
 patchKeyVals ::= patchKeyVal | patchKeyVal eol+ whitespaces? patchKeyVals whitespaces?;
-patch ::= "(" patchKey ")" splitter? "{" splitter? patchKeyVals splitter? "}" splitter?;
+patch ::= "(" patchKey ")" splitter? "{" splitter? patchKeyVals splitter? "}" splitter?
+        | "(" patchKey ")" splitter? "<<" splitter? array splitter?;
 
 (* Combination *)
 
