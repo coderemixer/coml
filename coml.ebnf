@@ -73,7 +73,7 @@
 <keyCharMiddles> ::= <keyCharMiddle> | <keyCharMiddle> <keyCharMiddles>;
 <keyChars> ::= <keyCharStart> | <keyCharStart> <keyCharMiddles>;
 <key> ::= <keyChars> | <number> | <boolean> | <string>;
-<hashElement> ::= <optionalWhiteSpaces> <key> <optionalSplitter> ":" <optionalSplitter> <basicTypes>
+<hashElement> ::= <optionalWhiteSpaces> <key> <optionalSplitter> ":" <optionalSplitter> <basicTypes>;
 <hash> ::= <hashElement> | <hashElement> <eols> <hash>;
 
 (* Import *)
