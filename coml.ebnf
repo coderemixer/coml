@@ -1,0 +1,96 @@
+<coml> ::= <combined>;
+
+(* Basic Token *)
+<whitespace> ::= " " | "\t";
+<whitespaces> ::= <whitespace> | <whitespace> <whitespaces>;
+<optionalWhiteSpaces> ::= "" | <whitespaces>;
+<eol> ::= "\r\n" | "\r" | "\n";
+<eols> ::= <eol> | <eol> <eols>;
+<splitter> ::= <whitespaces> | <eols>;
+<optionalSplitter> ::= "" | <splitter> | <splitter><optionalSplitter>;
+
+(* Basic Types *)
+
+<basicTypes> ::= <number> | <boolean> | <string> | <array> | <hash> | <key> | <patch>;
+
+(* Basic Types: Number *)
+
+<digit> ::= "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
+<natural> ::= <digit> | "0" | <natural> "0" | <digit> <natural>;
+<decInteger> ::= <natural> | "-" <natural> | "+" <natural>;
+<decimal> ::= <decInteger> "." <natural>;
+<float> ::= <decInteger> "f" | <decimal>;
+
+<binDigit> ::= "0" | "1";
+<binDigits> ::= <binDigit> | <binDigit> <binDigits>;
+<binNature> ::= "0b" <binDigits> | <binDigits>;
+<binInteger> ::= <binNature> | "-" <binNature> | "+" <binNature>;
+
+<octDigit> ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7";
+<octDigits> ::= <octDigit> | <octDigit> <octDigits>;
+<octNature> ::= "0o" <octDigits> | "0" <octDigits>;
+<octInteger> ::= <octNature> | "-" <octNature> | "+" <octNature>;
+
+<hexDigit> ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+             | "a" | "b" | "c" | "d" | "e" | "f" | "A" | "B" | "C" | "D" | "E" | "F";
+<hexDigits> ::= <hexDigit> | <hexDigit> <hexDigits>;
+<hexNature> ::= "0x" <hexDigits>;
+<hexInteger> ::= <hexNature> | "-" <hexNature> | "+" <hexNature>;
+
+<integer> ::= <binInteger> | <octInteger> | <hexInteger> | <decInteger>;
+<number> ::= <integer> | <float>;
+
+(* Basic Types: Boolean *)
+
+<boolean> ::= "true" | "false";
+
+(* Basic Types: String *)
+
+<doubleQuotedString> ::= #'".*?"';
+<singleQuotedString> ::= #'\'.*?\'';
+<string> ::= <doubleQuotedString> | <singleQuotedString>;
+
+(* Basic Types: Array *)
+
+<arrayElement> ::= <optionalSplitter> <basicTypes> <optionalSplitter>;
+<arrayElements> ::= <arrayElement> "," <arrayElement> | <arrayElement> "," | <arrayElement>;
+
+<inlineArrayElement> ::= <optionalSplitter> "-" <optionalWhiteSpaces> <basicTypes> <optionalSplitter>;
+<inlineArrayElements> ::= <inlineArrayElement> | <inlineArrayElement> <eols> <inlineArrayElements>;
+
+<array> ::= "[" <optionalSplitter> <arrayElements> <optionalSplitter> "]"
+          | "[" <optionalSplitter> "]"
+          | <inlineArrayElements>;
+
+(* Basic Types: Hash *)
+
+<keyCharStart> ::= "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m"
+                 | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+                 | "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M"
+                 | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z";
+
+<keyCharMiddle> ::= <keyCharStart> | <digit> | "0" | "_";
+<keyCharMiddles> ::= <keyCharMiddle> | <keyCharMiddle> <keyCharMiddles>;
+<keyChars> ::= <keyCharStart> | <keyCharStart> <keyCharMiddles>;
+<key> ::= <keyChars> | <number> | <boolean> | <string>;
+<hashElement> ::= <optionalWhiteSpaces> <key> <optionalSplitter> ":" <optionalSplitter> <basicTypes>
+<hash> ::= <hashElement> | <hashElement> <eols> <hash>;
+
+(* Import *)
+
+<import> ::= "import" <whitespaces> <string> <whitespaces> "as" <whitespaces> <key>;
+<imports> ::= <import> | <import> <eols> <imports>;
+
+(* Patch *)
+
+<patchKey> ::= <patchKey> "." <key> | <patchKey> "[" <optionalWhiteSpaces> <key> <optionalWhiteSpaces> "]" | <key>;
+<patchKeyVal> ::= <patchKey> <optionalWhiteSpaces> "=" <optionalWhiteSpaces> <basicTypes>;
+<patchKeyVals> ::= <patchKeyVal> | <patchKeyVal> <eols> <optionalWhiteSpaces> <patchKeyVals> <optionalWhiteSpaces>;
+<patch> ::= <key> <optionalSplitter> "{" <optionalSplitter> <patchKeyVals> <optionalSplitter> "}" <optionalSplitter>;
+
+(* Combinition *)
+
+<combined> ::= <hash> | <array>
+             | <imports> <eols> <hash>
+             | <imports> <eols> <array>
+             | <imports> <eols> <patch>;
