@@ -1,97 +1,83 @@
-<coml> ::= <combined> <optionalSplitter>;
+coml ::= combined splitter?;
 
 (* Basic Token *)
 
-<whitespace> ::= " " | "\t";
-<whitespaces> ::= <whitespace> | <whitespace> <whitespaces>;
-<optionalWhiteSpaces> ::= "" | <whitespaces>;
-<eol> ::= "\r\n" | "\r" | "\n";
-<eols> ::= <eol> | <eol> <eols>;
-<splitter> ::= <whitespaces> | <eols>;
-<optionalSplitter> ::= "" | <splitter> | <splitter><optionalSplitter>;
+whitespace ::= " " | "\t";
+whitespaces ::= whitespace+;
+eol ::= "\r\n" | "\r" | "\n";
+splitter ::= whitespaces | eol+ | whitespaces splitter | eol+ splitter;
 
 (* Basic Types *)
 
-<basicTypes> ::= <number> | <boolean> | <string> | <array> | <hash> | <patchKey> | <patch> | "nil" | "undefined";
+basicTypes ::= number | boolean | string | array | hash | patchKey | patch | "nil" | "undefined";
 
 (* Basic Types: Number *)
 
-<digit> ::= "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
-<natural> ::= <digit> | "0" | <natural> "0" | <digit> <natural>;
-<decInteger> ::= <natural> | "-" <natural> | "+" <natural>;
-<decimal> ::= <decInteger> "." <natural>;
-<float> ::= <decInteger> "f" | <decimal>;
+digit ::= #'[1-9]';
+natural ::= digit | "0" | natural "0" | digit natural;
+decInteger ::= natural | "-" natural | "+" natural;
 
-<binDigit> ::= "0" | "1";
-<binDigits> ::= <binDigit> | <binDigit> <binDigits>;
-<binNature> ::= "0b" <binDigits> | <binDigits>;
-<binInteger> ::= <binNature> | "-" <binNature> | "+" <binNature>;
+binDigit ::= #'[0-1]';
+binNature ::= "0b" binDigit+;
+binInteger ::= binNature | "-" binNature | "+" binNature;
 
-<octDigit> ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7";
-<octDigits> ::= <octDigit> | <octDigit> <octDigits>;
-<octNature> ::= "0o" <octDigits> | "0" <octDigits>;
-<octInteger> ::= <octNature> | "-" <octNature> | "+" <octNature>;
+octDigit ::= #'[0-7]';
+octNature ::= "0o" octDigit+ | "0" octDigit+;
+octInteger ::= octNature | "-" octNature | "+" octNature;
 
-<hexDigit> ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
-             | "a" | "b" | "c" | "d" | "e" | "f" | "A" | "B" | "C" | "D" | "E" | "F";
-<hexDigits> ::= <hexDigit> | <hexDigit> <hexDigits>;
-<hexNature> ::= "0x" <hexDigits>;
-<hexInteger> ::= <hexNature> | "-" <hexNature> | "+" <hexNature>;
+hexDigit ::= #'[0-9a-fA-F]';
+hexNature ::= "0x" hexDigit+;
+hexInteger ::= hexNature | "-" hexNature | "+" hexNature;
 
-<integer> ::= <binInteger> | <octInteger> | <hexInteger> | <decInteger>;
-<number> ::= <integer> | <float>;
+integer ::= decInteger | binInteger | octInteger | hexInteger;
+number ::= integer | decInteger "." natural;
 
 (* Basic Types: Boolean *)
 
-<boolean> ::= "true" | "false";
-
-(* Basic Types: String *)
-
-<doubleQuotedString> ::= #'".*?"';
-<singleQuotedString> ::= #'\'.*?\'';
-<string> ::= <doubleQuotedString> | <singleQuotedString>;
+boolean ::= "true" | "false";
 
 (* Basic Types: Array *)
 
-<arrayElement> ::= <optionalSplitter> <basicTypes> <optionalSplitter>;
-<arrayElements> ::= <arrayElement> "," <arrayElement> | <arrayElement> "," | <arrayElement>;
+arrayElement ::= splitter? basicTypes splitter?;
+arrayElements ::= arrayElement "," arrayElement | arrayElement "," | arrayElement;
 
-<inlineArrayElement> ::= <optionalSplitter> "-" <optionalWhiteSpaces> <basicTypes> <optionalSplitter>;
-<inlineArrayElements> ::= <inlineArrayElement> | <inlineArrayElement> <eols> <inlineArrayElements>;
+inlineArrayElement ::= (whitespaces?) "-" whitespaces? basicTypes splitter?;
+inlineArrayElements ::= inlineArrayElement | inlineArrayElement eol+ inlineArrayElements;
 
-<array> ::= "[" <optionalSplitter> <arrayElements> <optionalSplitter> "]"
-          | "[" <optionalSplitter> "]"
-          | <inlineArrayElements>;
+array ::= "[" splitter? arrayElements splitter? "]"
+        | "[" splitter? "]"
+        | inlineArrayElements;
 
 (* Basic Types: Hash *)
 
-<keyCharStart> ::= "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m"
-                 | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
-                 | "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M"
-                 | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z";
+keyCharStart ::= #'[a-zA-Z_]';
 
-<keyCharMiddle> ::= <keyCharStart> | <digit> | "0" | "_";
-<keyCharMiddles> ::= <keyCharMiddle> | <keyCharMiddle> <keyCharMiddles>;
-<keyChars> ::= <keyCharStart> | <keyCharStart> <keyCharMiddles>;
-<key> ::= <keyChars> | <number> | <boolean> | <string>;
-<hashElement> ::= <optionalWhiteSpaces> <key> <optionalSplitter> ":" <optionalSplitter> <basicTypes>;
-<hash> ::= <hashElement> | <hashElement> <eols> <hash>;
+keyCharMiddle ::= keyCharStart | digit | "0" | "_";
+key ::= keyCharStart keyCharMiddle*;
+hashElement ::= (whitespaces?) key (splitter?) ":" (splitter?) basicTypes;
+hash ::= hashElement | hashElement eol+ hash;
+
+(* Basic Types: String *)
+
+string ::= #'".*?"' | #'\'.*?\'';
 
 (* Import *)
 
-<import> ::= "import" <whitespaces> <string> <whitespaces> "as" <whitespaces> <key>;
-<imports> ::= <import> | <import> <eols> <imports>;
+import ::= "import" whitespaces (string) whitespaces "as" whitespaces key;
+imports ::= import | import eol+ imports;
 
 (* Patch *)
 
-<patchKey> ::= <patchKey> "." <key> | <patchKey> "[" <optionalWhiteSpaces> <key> <optionalWhiteSpaces> "]" | <key>;
-<patchKeyVal> ::= <patchKey> <optionalWhiteSpaces> "=" <optionalWhiteSpaces> <basicTypes>;
-<patchKeyVals> ::= <patchKeyVal> | <patchKeyVal> <eols> <optionalWhiteSpaces> <patchKeyVals> <optionalWhiteSpaces>;
-<patch> ::= <key> <optionalSplitter> "{" <optionalSplitter> <patchKeyVals> <optionalSplitter> "}" <optionalSplitter>;
+patchKey ::= patchKey "." key | patchKey "[" whitespaces? string whitespaces? "]" | key;
+patchReplace ::= patchKey whitespaces? "=" splitter? basicTypes;
+patchAppend ::= patchKey whitespaces? "<<" splitter? (hash | array);
+patchKeyVal ::= patchReplace | patchAppend;
+patchKeyVals ::= patchKeyVal | patchKeyVal eol+ whitespaces? patchKeyVals whitespaces?;
+patch ::= "(" patchKey ")" splitter? "{" splitter? patchKeyVals splitter? "}" splitter?;
 
-(* Combinition *)
+(* Combination *)
 
-<combined> ::= <hash> | <array>
-             | <imports> <eols> <hash>
-             | <imports> <eols> <array>
-             | <imports> <eols> <patch>;
+combined ::= hash | array
+           | imports eol+ hash
+           | imports eol+ array
+           | imports eol+ patch;
