@@ -69,7 +69,11 @@ imports ::= import | import eol+ imports;
 
 (* Patch *)
 
-patchKey ::= patchKey "." key | patchKey "[" whitespaces? string whitespaces? "]" | key;
+patchKey ::= patchKey "." key
+           | patchKey "[" whitespaces? (string | integer) whitespaces? "]"
+           | patchKey "[" whitespaces? integer whitespaces? ".." whitespaces? integer whitespaces? "]"
+           | patchKey "[" whitespaces? integer whitespaces? "..." whitespaces? integer whitespaces? "]"
+           | key;
 patchReplace ::= patchKey whitespaces? "=" splitter? basicTypes;
 patchAppend ::= patchKey whitespaces? "<<" splitter? (hash | array);
 patchKeyVal ::= patchReplace | patchAppend;
