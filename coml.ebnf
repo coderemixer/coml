@@ -1,4 +1,4 @@
-<coml> ::= <combined>;
+<coml> ::= <combined> <optionalSplitter>;
 
 (* Basic Token *)
 
