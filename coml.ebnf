@@ -77,19 +77,27 @@ patchKey ::= patchKey "." key
            | patchKey "[" whitespaces? integer whitespaces? ".." whitespaces? integer whitespaces? "]"
            | patchKey "[" whitespaces? integer whitespaces? "..." whitespaces? integer whitespaces? "]"
            | key;
+
 patchReplace ::= patchKey whitespaces? "=" splitter? expr;
-patchAppend ::= patchKey whitespaces? "<<" splitter? (hash | array);
-patchPrepend ::= patchKey whitespaces? ">>" splitter? (hash | array);
+patchAppend ::= patchKey whitespaces? "<<" splitter? expr
+              | patchKey whitespaces? "+=" splitter? expr;
+patchPrepend ::= patchKey whitespaces? ">>" splitter? expr;
+
 patchKeyVal ::= patchReplace | patchAppend | patchPrepend;
 patchKeyVals ::= patchKeyVal | patchKeyVal eol+ whitespaces? patchKeyVals whitespaces?;
 patch ::= "(" patchKey ")" splitter? "{" splitter? patchKeyVals splitter? "}" splitter?
-        | "(" patchKey ")" splitter? "<<" splitter? array splitter?;
+        | "(" patchKey ")" splitter? "+=" splitter? expr splitter?;
 
 (* Combination *)
 
 expr ::= basicTypes
        | expr splitter? "??" splitter? expr
-       | expr splitter? "+" splitter? expr;
+       | expr splitter? "+" splitter? expr
+       | expr splitter? "-" splitter? expr
+       | expr splitter? "*" splitter? expr
+       | expr splitter? "/" splitter? expr
+       | expr splitter? "%" splitter? expr
+       | "(" splitter? expr splitter? ")";
 
 combined ::= expr
            | imports eol+ expr;
