@@ -39,10 +39,10 @@ boolean ::= "true" | "false";
 
 (* Basic Types: Array *)
 
-arrayElement ::= splitter? basicTypes splitter?;
+arrayElement ::= splitter? expr splitter?;
 arrayElements ::= arrayElement "," arrayElement | arrayElement "," | arrayElement;
 
-inlineArrayElement ::= (whitespaces?) "-" whitespaces? basicTypes splitter?;
+inlineArrayElement ::= (whitespaces?) "-" whitespaces? expr splitter?;
 inlineArrayElements ::= inlineArrayElement | inlineArrayElement eol+ inlineArrayElements;
 
 array ::= "[" splitter? arrayElements splitter? "]"
@@ -55,7 +55,7 @@ keyCharStart ::= #'[a-zA-Z_]';
 
 keyCharMiddle ::= keyCharStart | digit | "0" | "_";
 key ::= keyCharStart keyCharMiddle*;
-hashElement ::= (whitespaces?) key (splitter?) ":" (splitter?) basicTypes;
+hashElement ::= (whitespaces?) key (splitter?) ":" (splitter?) expr;
 hash ::= hashElement | hashElement eol+ hash;
 
 (* Basic Types: String *)
@@ -74,16 +74,19 @@ patchKey ::= patchKey "." key
            | patchKey "[" whitespaces? integer whitespaces? ".." whitespaces? integer whitespaces? "]"
            | patchKey "[" whitespaces? integer whitespaces? "..." whitespaces? integer whitespaces? "]"
            | key;
-patchReplace ::= patchKey whitespaces? "=" splitter? basicTypes;
+patchReplace ::= patchKey whitespaces? "=" splitter? expr;
 patchAppend ::= patchKey whitespaces? "<<" splitter? (hash | array);
-patchKeyVal ::= patchReplace | patchAppend;
+patchPrepend ::= patchKey whitespaces? ">>" splitter? (hash | array);
+patchKeyVal ::= patchReplace | patchAppend | patchPrepend;
 patchKeyVals ::= patchKeyVal | patchKeyVal eol+ whitespaces? patchKeyVals whitespaces?;
 patch ::= "(" patchKey ")" splitter? "{" splitter? patchKeyVals splitter? "}" splitter?
         | "(" patchKey ")" splitter? "<<" splitter? array splitter?;
 
 (* Combination *)
 
-combined ::= hash | array
-           | imports eol+ hash
-           | imports eol+ array
-           | imports eol+ patch;
+expr ::= basicTypes
+       | expr splitter? "??" splitter? expr
+       | expr splitter? "+" splitter? expr;
+
+combined ::= expr
+           | imports eol+ expr;
