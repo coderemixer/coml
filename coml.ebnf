@@ -23,17 +23,15 @@ float ::= decInteger "f"
 
 binDigit ::= #'[0-1]';
 binNatural ::= "0b" binDigit+;
-binInteger ::= binNatural | "-" binNatural | "+" binNatural;
 
 octDigit ::= #'[0-7]';
 octNatural ::= "0o" octDigit+ | "0" octDigit+;
-octInteger ::= octNatural | "-" octNatural | "+" octNatural;
 
 hexDigit ::= #'[0-9a-fA-F]';
 hexNatural ::= "0x" hexDigit+;
-hexInteger ::= hexNatural | "-" hexNatural | "+" hexNatural;
 
-integer ::= decInteger | binInteger | octInteger | hexInteger;
+natural ::= decNatural | binNatural | octNatural | hexNatural;
+integer ::= natural | "-" natural | "+" natural;
 number ::= integer | float;
 
 (* Basic Types: Boolean *)
