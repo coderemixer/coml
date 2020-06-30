@@ -13,15 +13,16 @@ basicTypes ::= number | boolean | string | array | hash | patchKey | patch | "ni
 
 (* Basic Types: Number *)
 
-digit ::= #'[1-9]';
-decInteger ::= digit | "0" | decInteger "0" | digit decInteger;
+decDigit ::= #'[0-9]';
+nonZeroDecDigit ::= #'[1-9]';
+decInteger ::= "0" | nonZeroDecDigit decDigit*;
 
 exponentIndicator ::= "e" | "E";
-exponentPart ::= exponentIndicator decInteger
-               | exponentIndicator "-" decInteger
-               | exponentIndicator "+" decInteger;
+exponentPart ::= exponentIndicator decDigit+
+               | exponentIndicator "-" decDigit+
+               | exponentIndicator "+" decDigit+;
 unsignedFloat ::= decInteger "f"
-                | decInteger "." decInteger exponentPart*;
+                | decInteger "." decDigit+ exponentPart*;
 
 binDigit ::= #'[0-1]';
 binInteger ::= "0b" binDigit+;
@@ -58,7 +59,7 @@ array ::= "[" splitter? arrayElements splitter? "]"
 
 keyCharStart ::= #'[a-zA-Z_]';
 
-keyCharMiddle ::= keyCharStart | digit | "0" | "_";
+keyCharMiddle ::= keyCharStart | decDigit | "_";
 key ::= keyCharStart keyCharMiddle*;
 hashElement ::= (whitespaces?) key (splitter?) ":" (splitter?) expr;
 hash ::= hashElement | hashElement eol+ hash;
