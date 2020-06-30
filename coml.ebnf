@@ -59,7 +59,7 @@ array ::= "[" splitter? arrayElements splitter? "]"
 
 keyCharStart ::= #'[a-zA-Z_]';
 
-keyCharMiddle ::= keyCharStart | decDigit | "_";
+keyCharMiddle ::= keyCharStart | decDigit;
 key ::= keyCharStart keyCharMiddle*;
 hashElement ::= (whitespaces?) key (splitter?) ":" (splitter?) expr;
 hash ::= hashElement | hashElement eol+ hash;
