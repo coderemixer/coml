@@ -16,10 +16,13 @@ basicTypes ::= number | boolean | string | array | hash | patchKey | patch | "ni
 digit ::= #'[1-9]';
 decNatural ::= digit | "0" | decNatural "0" | digit decNatural;
 decInteger ::= decNatural | "-" decNatural | "+" decNatural;
+
+exponentIndicator ::= "e" | "E";
+exponentPart ::= exponentIndicator decNatural
+               | exponentIndicator "-" decNatural
+               | exponentIndicator "+" decNatural;
 float ::= decInteger "f"
-        | decInteger "." decNatural
-        | decInteger "." decNatural "e" decInteger
-        | decInteger "." decNatural "E" decInteger;
+        | decInteger "." decNatural exponentPart*;
 
 binDigit ::= #'[0-1]';
 binNatural ::= "0b" binDigit+;
