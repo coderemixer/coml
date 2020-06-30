@@ -14,28 +14,29 @@ basicTypes ::= number | boolean | string | array | hash | patchKey | patch | "ni
 (* Basic Types: Number *)
 
 digit ::= #'[1-9]';
-decNatural ::= digit | "0" | decNatural "0" | digit decNatural;
+decInteger ::= digit | "0" | decInteger "0" | digit decInteger;
 
 exponentIndicator ::= "e" | "E";
-exponentPart ::= exponentIndicator decNatural
-               | exponentIndicator "-" decNatural
-               | exponentIndicator "+" decNatural;
-unsignedFloat ::= decNatural "f"
-               | decNatural "." decNatural exponentPart*;
-float ::= unsignedFloat | "-" unsignedFloat | "+" unsignedFloat;
+exponentPart ::= exponentIndicator decInteger
+               | exponentIndicator "-" decInteger
+               | exponentIndicator "+" decInteger;
+unsignedFloat ::= decInteger "f"
+                | decInteger "." decInteger exponentPart*;
 
 binDigit ::= #'[0-1]';
-binNatural ::= "0b" binDigit+;
+binInteger ::= "0b" binDigit+;
 
 octDigit ::= #'[0-7]';
-octNatural ::= "0o" octDigit+ | "0" octDigit+;
+octInteger ::= "0o" octDigit+ | "0" octDigit+;
 
 hexDigit ::= #'[0-9a-fA-F]';
-hexNatural ::= "0x" hexDigit+;
+hexInteger ::= "0x" hexDigit+;
 
-unsignedInteger ::= decNatural | binNatural | octNatural | hexNatural;
-integer ::= unsignedInteger | "-" unsignedInteger | "+" unsignedInteger;
-number ::= integer | float;
+unsignedInteger ::= decInteger | binInteger | octInteger | hexInteger;
+signedInteger ::= unsignedInteger | "-" unsignedInteger | "+" unsignedInteger;
+signedFloat ::= unsignedFloat | "-" unsignedFloat | "+" unsignedFloat;
+
+number ::= signedInteger | signedFloat;
 
 (* Basic Types: Boolean *)
 
@@ -74,9 +75,9 @@ imports ::= import | import eol+ imports;
 (* Patch *)
 
 patchKey ::= patchKey "." key
-           | patchKey "[" whitespaces? (string | integer) whitespaces? "]"
-           | patchKey "[" whitespaces? integer whitespaces? ".." whitespaces? integer whitespaces? "]"
-           | patchKey "[" whitespaces? integer whitespaces? "..." whitespaces? integer whitespaces? "]"
+           | patchKey "[" whitespaces? (string | signedInteger) whitespaces? "]"
+           | patchKey "[" whitespaces? signedInteger whitespaces? ".." whitespaces? signedInteger whitespaces? "]"
+           | patchKey "[" whitespaces? signedInteger whitespaces? "..." whitespaces? signedInteger whitespaces? "]"
            | key;
 
 patchReplace ::= patchKey whitespaces? "=" splitter? expr;
