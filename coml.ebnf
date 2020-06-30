@@ -14,24 +14,24 @@ basicTypes ::= number | boolean | string | array | hash | patchKey | patch | "ni
 (* Basic Types: Number *)
 
 digit ::= #'[1-9]';
-natural ::= digit | "0" | natural "0" | digit natural;
-decInteger ::= natural | "-" natural | "+" natural;
+decNatural ::= digit | "0" | decNatural "0" | digit decNatural;
+decInteger ::= decNatural | "-" decNatural | "+" decNatural;
 float ::= decInteger "f"
-        | decInteger "." natural
-        | decInteger "." natural "e" decInteger
-        | decInteger "." natural "E" decInteger;
+        | decInteger "." decNatural
+        | decInteger "." decNatural "e" decInteger
+        | decInteger "." decNatural "E" decInteger;
 
 binDigit ::= #'[0-1]';
-binNature ::= "0b" binDigit+;
-binInteger ::= binNature | "-" binNature | "+" binNature;
+binNatural ::= "0b" binDigit+;
+binInteger ::= binNatural | "-" binNatural | "+" binNatural;
 
 octDigit ::= #'[0-7]';
-octNature ::= "0o" octDigit+ | "0" octDigit+;
-octInteger ::= octNature | "-" octNature | "+" octNature;
+octNatural ::= "0o" octDigit+ | "0" octDigit+;
+octInteger ::= octNatural | "-" octNatural | "+" octNatural;
 
 hexDigit ::= #'[0-9a-fA-F]';
-hexNature ::= "0x" hexDigit+;
-hexInteger ::= hexNature | "-" hexNature | "+" hexNature;
+hexNatural ::= "0x" hexDigit+;
+hexInteger ::= hexNatural | "-" hexNatural | "+" hexNatural;
 
 integer ::= decInteger | binInteger | octInteger | hexInteger;
 number ::= integer | float;
